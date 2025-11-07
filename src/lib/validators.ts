@@ -123,7 +123,7 @@ export function validateVoteSubmission(data: {
 
   // Prevent voting on own team's presentation
   if (data.presentingTeamId && data.teamId === data.presentingTeamId) {
-    return { valid: false, error: 'Cannot vote on your own team\'s episodes' };
+    return { valid: false, error: "Cannot vote on your own team's episodes" };
   }
 
   return { valid: true };

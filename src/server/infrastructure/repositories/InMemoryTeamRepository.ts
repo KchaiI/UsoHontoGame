@@ -1,5 +1,5 @@
+import type { Team } from '@/server/domain/entities/Team';
 import type { ITeamRepository } from '@/server/domain/repositories/ITeamRepository';
-import { Team } from '@/server/domain/entities/Team';
 
 /**
  * In-memory implementation of Team Repository

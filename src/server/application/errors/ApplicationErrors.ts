@@ -35,9 +35,7 @@ export class ValidationError extends ApplicationError {
  */
 export class NotFoundError extends ApplicationError {
   constructor(resource: string, identifier?: string) {
-    const message = identifier
-      ? `${resource} not found: ${identifier}`
-      : `${resource} not found`;
+    const message = identifier ? `${resource} not found: ${identifier}` : `${resource} not found`;
     super(message, 'NOT_FOUND');
   }
 }

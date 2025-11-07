@@ -1,6 +1,6 @@
 'use client';
 
-import { useScoreboard, type TeamScore } from './hooks/useScoreboard';
+import { type TeamScore, useScoreboard } from './hooks/useScoreboard';
 
 export type { TeamScore };
 
@@ -66,9 +66,7 @@ export function ScoreBoard({ teams, currentTeamId }: ScoreBoardProps) {
         })}
       </div>
 
-      {!hasScores && (
-        <div className="text-center text-gray-500 py-8">まだスコアがありません</div>
-      )}
+      {!hasScores && <div className="text-center text-gray-500 py-8">まだスコアがありません</div>}
     </div>
   );
 }

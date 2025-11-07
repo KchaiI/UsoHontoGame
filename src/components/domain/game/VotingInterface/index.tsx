@@ -82,12 +82,7 @@ export function VotingInterface({
         ))}
       </div>
 
-      <Button
-        onClick={handleSubmit}
-        disabled={!canSubmit || isLoading}
-        fullWidth
-        variant="primary"
-      >
+      <Button onClick={handleSubmit} disabled={!canSubmit || isLoading} fullWidth variant="primary">
         {isLoading ? '投票中...' : '投票する'}
       </Button>
     </div>

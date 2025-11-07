@@ -25,10 +25,7 @@ export class StartTurnUseCase {
   /**
    * Execute the use case
    */
-  async execute(request: {
-    sessionId: string;
-    presenterParticipantId?: string;
-  }): Promise<{
+  async execute(request: { sessionId: string; presenterParticipantId?: string }): Promise<{
     turnId: string;
     presentingTeamId: string;
     presenterParticipantId: string;
@@ -51,7 +48,9 @@ export class StartTurnUseCase {
     // Get current presenting team
     const presentingTeamId = session.getCurrentPresentingTeamId();
     if (!presentingTeamId) {
-      throw new BusinessRuleError('No more teams to present - all teams have completed their turns');
+      throw new BusinessRuleError(
+        'No more teams to present - all teams have completed their turns'
+      );
     }
 
     const presentingTeam = await this.teamRepository.findById(presentingTeamId);
@@ -69,7 +68,8 @@ export class StartTurnUseCase {
       );
 
       const eligibleMembers = teamMembers.filter(
-        (member): member is NonNullable<typeof member> => member !== null && member.episodes.length === 3
+        (member): member is NonNullable<typeof member> =>
+          member !== null && member.episodes.length === 3
       );
 
       if (eligibleMembers.length === 0) {
