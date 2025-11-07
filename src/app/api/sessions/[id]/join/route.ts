@@ -12,10 +12,7 @@ import { InMemoryParticipantRepository } from '@/server/infrastructure/repositor
  * POST /api/sessions/[id]/join
  * Allows a participant to join an existing session
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await request.json();
     const { id: sessionId } = await params;

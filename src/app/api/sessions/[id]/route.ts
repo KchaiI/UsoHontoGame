@@ -8,10 +8,7 @@ import { InMemoryTeamRepository } from '@/server/infrastructure/repositories/InM
  * GET /api/sessions/[id]
  * Retrieves session details including participants and teams
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: sessionId } = await params;
 

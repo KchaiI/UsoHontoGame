@@ -12,10 +12,7 @@ import { InMemoryVoteRepository } from '@/server/infrastructure/repositories/InM
  * POST /api/turns/[id]/reveal
  * Reveals the correct answer and calculates scores
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await request.json();
     const { id: turnId } = await params;
