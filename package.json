@@ -14,6 +14,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:integration": "start-server-and-test 'next dev' http://localhost:3000 'vitest run tests/integration/api'",
+    "test:integration:watch": "start-server-and-test 'next dev' http://localhost:3000 'vitest tests/integration/api'",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug"
@@ -39,6 +41,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "jsdom": "^27.1.0",
+    "start-server-and-test": "^2.1.2",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.7"
