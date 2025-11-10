@@ -1,198 +1,190 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * E2E Test: Complete Game Flow
+ * E2E Test: Simplified Game Creation Flow
  *
- * Tests the full player journey from session creation to results:
- * 1. Host creates a session
- * 2. Players join the session
- * 3. Host creates teams and assigns players
- * 4. Host starts the game
- * 5. Players register episodes
- * 6. Players vote on episodes
- * 7. Host reveals results
- * 8. View final results page
+ * Tests the simplified navigation:
+ * 1. User lands on JoinPage (/)
+ * 2. User navigates to CreatePage (/create)
+ * 3. User creates a game with episodes
+ * 4. User is redirected back to JoinPage with sessionId
+ * 5. Session state persists via cookies
  */
 
-test.describe('Complete Game Flow', () => {
-  test('should complete full game from creation to results', async ({ browser }) => {
-    // Create multiple browser contexts to simulate multiple users
-    const hostContext = await browser.newContext();
-    const player1Context = await browser.newContext();
-    const player2Context = await browser.newContext();
+test.describe('Simplified Game Flow', () => {
+  test('should complete game creation and return to join page', async ({ page }) => {
+    // STEP 1: Navigate to root, should be on JoinPage
+    await test.step('User lands on JoinPage', async () => {
+      await page.goto('/');
 
-    const hostPage = await hostContext.newPage();
-    const player1Page = await player1Context.newPage();
-    const player2Page = await player2Context.newPage();
+      // Should be on join page (either / or /join)
+      await expect(page.locator('text=ゲームに参加').or(page.locator('text=参加'))).toBeVisible({
+        timeout: 5000,
+      });
+    });
 
+    // STEP 2: Navigate to CreatePage
+    await test.step('User navigates to CreatePage', async () => {
+      // Click "Create Game" button
+      await page.click('button:has-text("ゲームを作成")');
+
+      // Should navigate to /create
+      await page.waitForURL(/\/create/);
+
+      // Verify CreatePage loaded
+      await expect(page.locator('text=エピソードを追加').or(page.locator('text=新しいゲーム'))).toBeVisible();
+    });
+
+    // STEP 3: Create a game with episodes
     let sessionId: string;
-    let hostUrl: string;
+    await test.step('User creates game with episodes', async () => {
+      // Fill in at least one episode
+      const episodeInput = page.locator('textarea').first();
+      await episodeInput.fill('I have visited 30 countries');
 
-    try {
-      // STEP 1: Host creates a session
-      await test.step('Host creates a session', async () => {
-        await hostPage.goto('/');
+      // Submit the form
+      await page.click('button:has-text("ゲームを作成")');
 
-        // Fill in nickname
-        await hostPage.fill('input#nickname', 'Test Host');
+      // Should redirect to /join with sessionId query param
+      await page.waitForURL(/\/join\?sessionId=([A-Z0-9]+)/);
 
-        // Click create button
-        await hostPage.click('button:has-text("ゲームを作成")');
+      // Extract session ID from URL
+      const url = page.url();
+      const match = url.match(/sessionId=([A-Z0-9]+)/);
+      expect(match).toBeTruthy();
+      sessionId = match![1];
+    });
 
-        // Wait for redirect to game page
-        await hostPage.waitForURL(/\/game\/[A-Z0-9]+/);
+    // STEP 4: Verify back on JoinPage with session info
+    await test.step('User sees created session on JoinPage', async () => {
+      // Should display session ID somewhere on the page
+      await expect(page.locator(`text=${sessionId}`)).toBeVisible({ timeout: 5000 });
+    });
 
-        // Extract session ID from URL
-        const url = hostPage.url();
-        const match = url.match(/\/game\/([A-Z0-9]+)/);
-        expect(match).toBeTruthy();
-        sessionId = match![1];
-        hostUrl = url;
+    // STEP 5: Verify session persists via cookie
+    await test.step('Session state persists after refresh', async () => {
+      // Refresh the page
+      await page.reload();
 
-        // Verify host page loaded
-        await expect(hostPage.locator('text=セッション:')).toBeVisible();
-      });
-
-      // STEP 2: Players join the session
-      await test.step('Players join the session', async () => {
-        // Player 1 joins
-        await player1Page.goto('/');
-        await player1Page.click('button:has-text("参加")');
-        await player1Page.fill('input#sessionId', sessionId);
-        await player1Page.fill('input#nickname', 'Player 1');
-        await player1Page.click('button:has-text("ゲームに参加")');
-        await player1Page.waitForURL(/\/game\/[A-Z0-9]+/);
-
-        // Player 2 joins
-        await player2Page.goto('/');
-        await player2Page.click('button:has-text("参加")');
-        await player2Page.fill('input#sessionId', sessionId);
-        await player2Page.fill('input#nickname', 'Player 2');
-        await player2Page.click('button:has-text("ゲームに参加")');
-        await player2Page.waitForURL(/\/game\/[A-Z0-9]+/);
-
-        // Wait a bit for all joins to register
-        await hostPage.waitForTimeout(1000);
-      });
-
-      // STEP 3: Host creates teams and assigns players
-      await test.step('Host creates teams and assigns players', async () => {
-        // Skip team management UI test for now as the host management page
-        // requires specific routing that may not be available in all flows
-        // This is acceptable for MVP testing
-        console.log('Skipping team management UI test for now');
-      });
-
-      // STEP 4: Host starts the game
-      await test.step('Host starts the game', async () => {
-        // Try to start game (may fail if teams aren't properly configured)
-        const startButton = hostPage.locator('button:has-text("Start Game")');
-
-        if (await startButton.isVisible()) {
-          await startButton.click();
-
-          // Handle confirmation dialog if it appears
-          hostPage.once('dialog', (dialog) => dialog.accept());
-
-          // Wait a bit for game to start
-          await hostPage.waitForTimeout(2000);
-        }
-      });
-
-      // STEP 5: Players register episodes (preparation phase)
-      await test.step('Players register episodes', async () => {
-        // Check if we're in preparation phase
-        const episodeForm = player1Page.locator('text=エピソードを登録してください');
-
-        if (await episodeForm.isVisible({ timeout: 5000 })) {
-          // Player 1 registers episodes
-          await player1Page.fill('input#episode1', 'I have climbed Mount Fuji three times');
-          await player1Page.click('input#lie1');
-          await player1Page.fill('input#episode2', 'I have visited 10 countries in Asia');
-          await player1Page.fill('input#episode3', 'I speak three languages fluently');
-          await player1Page.click('button:has-text("登録")');
-
-          // Wait for submission
-          await player1Page.waitForTimeout(1000);
-        }
-      });
-
-      // STEP 6: Check results page accessibility
-      await test.step('Navigate to results page', async () => {
-        const resultsUrl = `/results/${sessionId}`;
-        await hostPage.goto(resultsUrl);
-
-        // Results page should load (even if game isn't complete)
-        await expect(
-          hostPage.locator('text=Game Complete').or(hostPage.locator('text=Error'))
-        ).toBeVisible({
-          timeout: 10000,
-        });
-      });
-
-      // STEP 7: Verify key game elements exist
-      await test.step('Verify game elements are present', async () => {
-        // Go back to game page
-        await hostPage.goto(hostUrl);
-
-        // Check that session info is displayed
-        await expect(hostPage.locator(`text=セッション: ${sessionId}`)).toBeVisible();
-
-        // Check participants section exists
-        await expect(hostPage.locator('text=参加者一覧')).toBeVisible();
-      });
-    } finally {
-      // Cleanup: Close all contexts
-      await hostContext.close();
-      await player1Context.close();
-      await player2Context.close();
-    }
+      // Session ID should still be visible (from cookie)
+      await expect(page.locator(`text=${sessionId}`)).toBeVisible({ timeout: 5000 });
+    });
   });
 
-  test('should handle session creation with validation', async ({ page }) => {
-    await page.goto('/');
+  test('should show 404 for removed routes', async ({ page }) => {
+    await test.step('Removed /game route shows 404', async () => {
+      const response = await page.goto('/game/ABC1234567');
 
-    // Try to create without nickname - should show validation
+      // Should return 404 status
+      expect(response?.status()).toBe(404);
+
+      // Should show 404 page with link to join
+      await expect(page.locator('text=404').or(page.locator('text=Page Not Found'))).toBeVisible({
+        timeout: 5000,
+      });
+      await expect(page.locator('a[href="/join"]')).toBeVisible();
+    });
+
+    await test.step('Removed /results route shows 404', async () => {
+      const response = await page.goto('/results/ABC1234567');
+
+      // Should return 404 status
+      expect(response?.status()).toBe(404);
+
+      // Should show 404 page
+      await expect(page.locator('text=404').or(page.locator('text=Page Not Found'))).toBeVisible({
+        timeout: 5000,
+      });
+    });
+
+    await test.step('Removed /host route shows 404', async () => {
+      const response = await page.goto('/host/ABC1234567');
+
+      // Should return 404 status
+      expect(response?.status()).toBe(404);
+
+      // Should show 404 page
+      await expect(page.locator('text=404').or(page.locator('text=Page Not Found'))).toBeVisible({
+        timeout: 5000,
+      });
+    });
+
+    await test.step('Removed /manage route shows 404', async () => {
+      const response = await page.goto('/manage/ABC1234567');
+
+      // Should return 404 status
+      expect(response?.status()).toBe(404);
+
+      // Should show 404 page
+      await expect(page.locator('text=404').or(page.locator('text=Page Not Found'))).toBeVisible({
+        timeout: 5000,
+      });
+    });
+
+    await test.step('404 page has working link back to join', async () => {
+      await page.goto('/game/INVALID');
+
+      // Click "Go to Join Page" link
+      await page.click('a[href="/join"]');
+
+      // Should navigate to join page
+      await page.waitForURL(/\/join/);
+
+      // Verify on join page
+      await expect(page.locator('text=ゲームに参加').or(page.locator('text=参加'))).toBeVisible();
+    });
+  });
+
+  test('should handle game creation validation', async ({ page }) => {
+    await page.goto('/create');
+
+    // Try to create without episodes - should show validation
     await page.click('button:has-text("ゲームを作成")');
 
-    // Should show error message (using more specific selector to avoid duplicates)
-    await expect(page.locator('.text-red-600').first()).toBeVisible({
+    // Should show error message
+    await expect(page.locator('.text-red-600, [class*="error"]').first()).toBeVisible({
       timeout: 2000,
     });
 
-    // Fill in nickname and create
-    await page.fill('input#nickname', 'Valid Host');
+    // Fill in valid episode and create
+    const episodeInput = page.locator('textarea').first();
+    await episodeInput.fill('Valid episode content');
     await page.click('button:has-text("ゲームを作成")');
 
-    // Should navigate to game page
-    await page.waitForURL(/\/game\/[A-Z0-9]+/, { timeout: 10000 });
+    // Should navigate to join page with sessionId
+    await page.waitForURL(/\/join\?sessionId=[A-Z0-9]+/, { timeout: 10000 });
   });
 
-  test('should handle invalid session join', async ({ page }) => {
-    await page.goto('/');
+  test('should display loading states during creation', async ({ page }) => {
+    await page.goto('/create');
 
-    // Switch to join mode
-    await page.click('button:has-text("参加")');
-
-    // Try to join with invalid session ID
-    await page.fill('input#sessionId', 'INVALID');
-    await page.fill('input#nickname', 'Test Player');
-    await page.click('button:has-text("ゲームに参加")');
-
-    // Should show error message
-    await expect(page.locator('.text-red-600')).toBeVisible({ timeout: 5000 });
-  });
-
-  test('should display loading states', async ({ page }) => {
-    await page.goto('/');
-
-    await page.fill('input#nickname', 'Test User');
+    // Fill in episode
+    const episodeInput = page.locator('textarea').first();
+    await episodeInput.fill('Test episode');
 
     // Click create button
     const createButton = page.locator('button:has-text("ゲームを作成")');
     await createButton.click();
 
-    // Should show loading state (処理中...)
-    await expect(page.locator('button:has-text("処理中...")')).toBeVisible({ timeout: 1000 });
+    // Should show loading state
+    await expect(
+      page.locator('button:has-text("作成中..."), button:has-text("処理中..."), button:disabled')
+    ).toBeVisible({ timeout: 1000 });
+  });
+
+  test('should allow navigation between join and create pages', async ({ page }) => {
+    // Start on join page
+    await page.goto('/');
+
+    // Navigate to create
+    await page.click('button:has-text("ゲームを作成")');
+    await page.waitForURL(/\/create/);
+
+    // Use browser back button to return to join
+    await page.goBack();
+    await page.waitForURL(/\/(join)?$/);
+
+    // Verify back on join page
+    await expect(page.locator('text=ゲームに参加').or(page.locator('text=参加'))).toBeVisible();
   });
 });

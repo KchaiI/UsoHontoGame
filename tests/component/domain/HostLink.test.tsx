@@ -31,7 +31,7 @@ describe('HostLink', () => {
   });
 
   describe('Rendering', () => {
-    it('should render link when user is host', () => {
+    it('should render badge when user is host', () => {
       mockUseHostAccess.mockReturnValue({
         isHost: true,
         isLoading: false,
@@ -40,8 +40,8 @@ describe('HostLink', () => {
 
       render(<HostLink sessionId="TEST42" />);
 
-      expect(screen.getByRole('link')).toBeInTheDocument();
-      expect(screen.getByText(/ホスト管理画面/)).toBeInTheDocument();
+      expect(screen.getByText(/ホスト/)).toBeInTheDocument();
+      expect(screen.getByText(/👑/)).toBeInTheDocument();
     });
 
     it('should not render when user is not host', () => {
@@ -53,8 +53,8 @@ describe('HostLink', () => {
 
       render(<HostLink sessionId="TEST42" />);
 
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
-      expect(screen.queryByText(/ホスト管理画面/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/ホスト/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/👑/)).not.toBeInTheDocument();
     });
 
     it('should not render while loading', () => {
@@ -66,7 +66,7 @@ describe('HostLink', () => {
 
       render(<HostLink sessionId="TEST42" />);
 
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(screen.queryByText(/ホスト/)).not.toBeInTheDocument();
     });
 
     it('should not render when there is an error', () => {
@@ -78,7 +78,7 @@ describe('HostLink', () => {
 
       render(<HostLink sessionId="TEST42" />);
 
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(screen.queryByText(/ホスト/)).not.toBeInTheDocument();
     });
 
     it('should not render when sessionId is undefined', () => {
@@ -90,37 +90,26 @@ describe('HostLink', () => {
 
       render(<HostLink sessionId={undefined} />);
 
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(screen.queryByText(/ホスト/)).not.toBeInTheDocument();
       expect(mockUseHostAccess).toHaveBeenCalledWith(undefined);
     });
   });
 
-  describe('Link Properties', () => {
-    it('should link to correct host management page', () => {
+  describe('Badge Properties', () => {
+    it('should display host badge with correct styling', () => {
       mockUseHostAccess.mockReturnValue({
         isHost: true,
         isLoading: false,
         error: null,
       });
 
-      render(<HostLink sessionId="TEST42" />);
+      const { container } = render(<HostLink sessionId="TEST42" />);
 
-      const link = screen.getByRole('link');
-      expect(link).toHaveAttribute('href', '/host/TEST42');
-    });
-
-    it('should apply correct styling classes', () => {
-      mockUseHostAccess.mockReturnValue({
-        isHost: true,
-        isLoading: false,
-        error: null,
-      });
-
-      render(<HostLink sessionId="TEST42" />);
-
-      const link = screen.getByRole('link');
-      expect(link).toHaveClass('text-blue-600');
-      expect(link).toHaveClass('hover:text-blue-800');
+      const badge = container.querySelector('.inline-flex');
+      expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass('inline-flex');
+      expect(badge).toHaveClass('bg-blue-100');
+      expect(badge).toHaveClass('text-blue-800');
     });
   });
 
@@ -148,7 +137,7 @@ describe('HostLink', () => {
       });
 
       rerender(<HostLink sessionId="TEST42" />);
-      expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      expect(screen.queryByText(/ホスト/)).not.toBeInTheDocument();
 
       // Becomes host
       mockUseHostAccess.mockReturnValue({
@@ -158,12 +147,12 @@ describe('HostLink', () => {
       });
 
       rerender(<HostLink sessionId="TEST42" />);
-      expect(screen.getByRole('link')).toBeInTheDocument();
+      expect(screen.getByText(/ホスト/)).toBeInTheDocument();
     });
   });
 
   describe('Different Session IDs', () => {
-    it('should generate correct link for different sessionIds', () => {
+    it('should render badge for different sessionIds', () => {
       const sessionIds = ['TEST42', 'ABC123', 'XYZ789'];
 
       sessionIds.forEach((sessionId) => {
@@ -175,8 +164,8 @@ describe('HostLink', () => {
 
         const { unmount } = render(<HostLink sessionId={sessionId} />);
 
-        const link = screen.getByRole('link');
-        expect(link).toHaveAttribute('href', `/host/${sessionId}`);
+        expect(screen.getByText(/ホスト/)).toBeInTheDocument();
+        expect(screen.getByText(/👑/)).toBeInTheDocument();
 
         unmount();
       });

@@ -88,16 +88,16 @@ describe('useGameCreation', () => {
       expect(result.current.episodes).toHaveLength(1);
     });
 
-    it('should not allow more than 20 episodes', () => {
+    it('should not allow more than 3 episodes', () => {
       const { result } = renderHook(() => useGameCreation());
 
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < 5; i++) {
         act(() => {
           result.current.addEpisode();
         });
       }
 
-      expect(result.current.episodes).toHaveLength(20);
+      expect(result.current.episodes).toHaveLength(3);
     });
   });
 
@@ -118,7 +118,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Test episode');
+        result.current.updateEpisode(0, 'Test episode 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Test episode 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Test episode 3');
       });
 
       await act(async () => {
@@ -150,7 +154,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Episode content');
+        result.current.updateEpisode(0, 'Episode content 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Episode content 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Episode content 3');
       });
 
       await act(async () => {
@@ -173,7 +181,7 @@ describe('useGameCreation', () => {
         await result.current.createGame();
       });
 
-      expect(mockError).toHaveBeenCalledWith('Please add at least one episode');
+      expect(mockError).toHaveBeenCalledWith('Please add exactly 3 episodes');
       expect(mockFetch).not.toHaveBeenCalled();
     });
 
@@ -182,6 +190,13 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
+        result.current.addEpisode();
+        result.current.addEpisode();
+      });
+
+      // Wait for state to update before calling createGame
+      await waitFor(() => {
+        expect(result.current.episodes.length).toBe(3);
       });
 
       await act(async () => {
@@ -198,6 +213,15 @@ describe('useGameCreation', () => {
       act(() => {
         result.current.addEpisode();
         result.current.updateEpisode(0, '   ');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Valid content');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Valid content 2');
+      });
+
+      // Wait for state to update before calling createGame
+      await waitFor(() => {
+        expect(result.current.episodes.length).toBe(3);
       });
 
       await act(async () => {
@@ -217,7 +241,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Test episode');
+        result.current.updateEpisode(0, 'Test episode 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Test episode 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Test episode 3');
       });
 
       await act(async () => {
@@ -246,7 +274,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Test episode');
+        result.current.updateEpisode(0, 'Test episode 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Test episode 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Test episode 3');
       });
 
       await act(async () => {
@@ -274,7 +306,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Test episode');
+        result.current.updateEpisode(0, 'Test episode 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Test episode 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Test episode 3');
       });
 
       await act(async () => {
@@ -301,7 +337,11 @@ describe('useGameCreation', () => {
 
       act(() => {
         result.current.addEpisode();
-        result.current.updateEpisode(0, 'Test episode');
+        result.current.updateEpisode(0, 'Test episode 1');
+        result.current.addEpisode();
+        result.current.updateEpisode(1, 'Test episode 2');
+        result.current.addEpisode();
+        result.current.updateEpisode(2, 'Test episode 3');
       });
 
       act(() => {
