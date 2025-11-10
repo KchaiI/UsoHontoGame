@@ -69,33 +69,33 @@ This document provides a complete, dependency-ordered task list for implementing
 
 ### Domain Errors
 
-- [ ] T014 [P] Create ValidationError class in `src/server/domain/errors/ValidationError.ts`
-- [ ] T015 [P] Create InvalidStatusTransitionError class in `src/server/domain/errors/InvalidStatusTransitionError.ts`
+- [X] T014 [P] Create ValidationError class in `src/server/domain/errors/ValidationError.ts`
+- [X] T015 [P] Create InvalidStatusTransitionError class in `src/server/domain/errors/InvalidStatusTransitionError.ts`
 
 ### Value Objects
 
-- [ ] T016 [P] Create GameId value object with UUID validation in `src/server/domain/value-objects/GameId.ts`
-- [ ] T017 [P] Create GameStatus value object with enum validation in `src/server/domain/value-objects/GameStatus.ts`
-- [ ] T018 [P] Write unit tests for GameId in `tests/unit/domain/GameId.test.ts`
-- [ ] T019 [P] Write unit tests for GameStatus in `tests/unit/domain/GameStatus.test.ts`
+- [X] T016 [P] Create GameId value object with UUID validation in `src/server/domain/value-objects/GameId.ts`
+- [X] T017 [P] Create GameStatus value object with enum validation in `src/server/domain/value-objects/GameStatus.ts`
+- [X] T018 [P] Write unit tests for GameId in `tests/unit/domain/GameId.test.ts`
+- [X] T019 [P] Write unit tests for GameStatus in `tests/unit/domain/GameStatus.test.ts`
 
 ### Domain Entities
 
-- [ ] T020 Create Episode entity with validation in `src/server/domain/entities/Episode.ts`
-- [ ] T021 Create Presenter entity with hasCompleteEpisodes() method in `src/server/domain/entities/Presenter.ts`
-- [ ] T022 Create Game entity with status transitions (startAccepting, close) in `src/server/domain/entities/Game.ts`
-- [ ] T023 [P] Write unit tests for Episode entity in `tests/unit/domain/Episode.test.ts`
-- [ ] T024 [P] Write unit tests for Presenter entity in `tests/unit/domain/Presenter.test.ts`
-- [ ] T025 [P] Write unit tests for Game entity (30 tests covering all validations) in `tests/unit/domain/Game.test.ts`
+- [X] T020 Create Episode entity with validation in `src/server/domain/entities/Episode.ts`
+- [X] T021 Create Presenter entity with hasCompleteEpisodes() method in `src/server/domain/entities/Presenter.ts`
+- [X] T022 Create Game entity with status transitions (startAccepting, close) in `src/server/domain/entities/Game.ts`
+- [X] T023 [P] Write unit tests for Episode entity in `tests/unit/domain/Episode.test.ts`
+- [X] T024 [P] Write unit tests for Presenter entity in `tests/unit/domain/Presenter.test.ts`
+- [X] T025 [P] Write unit tests for Game entity (30 tests covering all validations) in `tests/unit/domain/Game.test.ts`
 
 ### Repository Layer
 
-- [ ] T026 Create IGameRepository interface in `src/server/domain/repositories/IGameRepository.ts`
-- [ ] T027 Create PrismaGameRepository implementation in `src/server/infrastructure/repositories/PrismaGameRepository.ts`
-- [ ] T028 Update InMemoryGameRepository to match IGameRepository interface in `src/server/infrastructure/repositories/InMemoryGameRepository.ts`
-- [ ] T029 Create repository factory with DI in `src/server/infrastructure/repositories/index.ts`
-- [ ] T030 [P] Write integration tests for PrismaGameRepository in `tests/integration/repositories/PrismaGameRepository.test.ts`
-- [ ] T031 [P] Write integration tests for InMemoryGameRepository in `tests/integration/repositories/InMemoryGameRepository.test.ts`
+- [X] T026 Create IGameRepository interface in `src/server/domain/repositories/IGameRepository.ts`
+- [X] T027 Create PrismaGameRepository implementation in `src/server/infrastructure/repositories/PrismaGameRepository.ts`
+- [X] T028 Update InMemoryGameRepository to match IGameRepository interface in `src/server/infrastructure/repositories/InMemoryGameRepository.ts`
+- [X] T029 Create repository factory with DI in `src/server/infrastructure/repositories/index.ts`
+- [X] T030 [P] Write integration tests for PrismaGameRepository in `tests/integration/repositories/PrismaGameRepository.test.ts`
+- [X] T031 [P] Write integration tests for InMemoryGameRepository in `tests/integration/repositories/InMemoryGameRepository.test.ts`
 
 ---
 
