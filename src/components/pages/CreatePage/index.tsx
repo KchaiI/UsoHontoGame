@@ -17,14 +17,14 @@ export function CreatePage() {
         <div className="mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">Create New Game</h1>
           <p className="text-sm sm:text-base text-center text-gray-600">
-            Add episodes for your game (1-20 episodes)
+            Add exactly 3 episodes for your game
           </p>
         </div>
 
         <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 rounded-lg">
           <h2 className="text-sm font-semibold text-blue-900 mb-2">Instructions</h2>
           <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
-            <li>1. Add at least one episode</li>
+            <li>1. Add exactly 3 episodes</li>
             <li>2. Each episode should describe a game scenario or prompt</li>
             <li>3. Click &quot;Create Game&quot; to generate your session ID</li>
             <li>4. Share the session ID with players</li>

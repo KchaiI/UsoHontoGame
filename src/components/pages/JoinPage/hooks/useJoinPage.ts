@@ -19,40 +19,17 @@ export function useJoinPage({ sessionId }: UseJoinPageProps) {
   const [mode, setMode] = useState<'join' | 'create'>(sessionId ? 'join' : 'create');
 
   /**
-   * Handle session creation
+   * Handle navigation to create page
+   * Simplified flow: Navigate to /create instead of creating session directly
    */
   const handleCreateSession = async () => {
-    if (!nickname.trim()) {
-      setError('ニックネームを入力してください');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hostNickname: nickname }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'セッションの作成に失敗しました');
-      }
-
-      const data = await response.json();
-      router.push(`/game/${data.sessionId}?participantId=${data.hostId}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'エラーが発生しました');
-    } finally {
-      setIsLoading(false);
-    }
+    // Navigate to create page
+    router.push('/create');
   };
 
   /**
    * Handle joining a session
+   * Simplified flow: Stay on join page after joining
    */
   const handleJoinSession = async () => {
     if (!nickname.trim()) {
@@ -80,8 +57,11 @@ export function useJoinPage({ sessionId }: UseJoinPageProps) {
         throw new Error(data.error || 'セッションへの参加に失敗しました');
       }
 
-      const data = await response.json();
-      router.push(`/game/${joinSessionId}?participantId=${data.participantId}`);
+      // const data = await response.json();
+      // Simplified flow: Stay on join page (no game play page to navigate to)
+      // In the future, this could show a success message or update the UI
+      setError(null);
+      // Success! User has joined the session
     } catch (err) {
       setError(err instanceof Error ? err.message : 'エラーが発生しました');
     } finally {

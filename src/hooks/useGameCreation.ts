@@ -27,37 +27,47 @@ export function useGameCreation() {
 
   /**
    * Add a new empty episode
+   * Maximum 3 episodes allowed
    */
   const addEpisode = () => {
-    if (episodes.length >= 20) {
-      return; // Silently prevent adding more than 20
-    }
-    setEpisodes([...episodes, { content: '' }]);
+    setEpisodes((prevEpisodes) => {
+      if (prevEpisodes.length >= 3) {
+        return prevEpisodes; // Silently prevent adding more than 3
+      }
+      return [...prevEpisodes, { content: '' }];
+    });
   };
 
   /**
    * Update episode content at specific index
    */
   const updateEpisode = (index: number, content: string) => {
-    const newEpisodes = [...episodes];
-    newEpisodes[index] = { content };
-    setEpisodes(newEpisodes);
+    setEpisodes((prevEpisodes) => {
+      const newEpisodes = [...prevEpisodes];
+      newEpisodes[index] = { content };
+      return newEpisodes;
+    });
   };
 
   /**
    * Remove episode at specific index
    */
   const removeEpisode = (index: number) => {
-    const newEpisodes = episodes.filter((_, i) => i !== index);
-    setEpisodes(newEpisodes);
+    setEpisodes((prevEpisodes) => prevEpisodes.filter((_, i) => i !== index));
   };
 
   /**
    * Validate episodes before submission
+   * Requires exactly 3 episodes with content
    */
   const validateEpisodes = (): boolean => {
-    if (episodes.length === 0) {
-      toast.error('Please add at least one episode');
+    if (episodes.length < 3) {
+      toast.error('Please add exactly 3 episodes');
+      return false;
+    }
+
+    if (episodes.length > 3) {
+      toast.error('Maximum 3 episodes allowed');
       return false;
     }
 

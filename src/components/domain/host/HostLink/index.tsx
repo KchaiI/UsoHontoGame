@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useHostAccess } from '@/hooks/useHostAccess';
 
 export interface HostLinkProps {
@@ -9,8 +8,8 @@ export interface HostLinkProps {
 
 /**
  * HostLink
- * Conditional link that only appears for session hosts
- * Links to the host management page for the session
+ * Conditional indicator that shows if user is the host
+ * Note: Host management page has been removed in the simplified flow
  */
 export function HostLink({ sessionId }: HostLinkProps) {
   const { isHost, isLoading } = useHostAccess(sessionId);
@@ -20,12 +19,11 @@ export function HostLink({ sessionId }: HostLinkProps) {
     return null;
   }
 
+  // Host management removed - just show a badge indicating host status
   return (
-    <Link
-      href={`/host/${sessionId}`}
-      className="text-blue-600 hover:text-blue-800 underline text-sm font-medium transition-colors"
-    >
-      ホスト管理画面へ
-    </Link>
+    <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+      <span className="mr-1">👑</span>
+      ホスト
+    </div>
   );
 }
