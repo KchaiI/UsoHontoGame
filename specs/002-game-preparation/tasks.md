@@ -308,8 +308,8 @@ This document provides a complete, dependency-ordered task list for implementing
 
 ### UI Components
 
-- [ ] T088 [P] Create Button component with variants in `src/components/ui/Button.tsx`
-- [ ] T089 [P] Create Input component with validation states in `src/components/ui/Input.tsx`
+- [X] T088 [P] Create Button component with variants in `src/components/ui/Button.tsx`
+- [X] T089 [P] Create Input component with validation states in `src/components/ui/Input.tsx`
 
 ---
 
