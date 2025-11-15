@@ -103,7 +103,7 @@ describe('PresenterWithEpisodesForm', () => {
       const episodeInputs = screen.getAllByPlaceholderText(/エピソード.*の内容を入力してください/);
       await user.type(episodeInputs[0], 'テスト');
 
-      expect(screen.getAllByText(/5\/1000文字/)).toHaveLength(1);
+      expect(screen.getAllByText(/3\/1000文字/)).toHaveLength(1);
     });
   });
 

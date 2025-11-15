@@ -157,6 +157,11 @@ export async function removePresenterAction(
 /**
  * Add Episode Server Action
  * Adds a new episode to a presenter
+ *
+ * @deprecated This action is deprecated as of feature 003-presenter-episode-inline.
+ * Use addPresenterWithEpisodesAction instead, which allows registering a presenter
+ * with all 3 episodes in a single atomic operation.
+ * This action remains for backward compatibility only.
  */
 export async function addEpisodeAction(
   formData: FormData
