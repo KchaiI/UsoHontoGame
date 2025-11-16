@@ -114,7 +114,7 @@ export function PresenterManagementPage({ gameId }: PresenterManagementPageProps
                 {
                   presenters.filter(
                     (p) =>
-                      p.episodes.length === 3 && p.episodes.filter((ep) => ep.isLie).length === 1
+                      p.episodes?.length === 3 && p.episodes?.filter((ep) => ep.isLie).length === 1
                   ).length
                 }
               </p>
@@ -126,7 +126,10 @@ export function PresenterManagementPage({ gameId }: PresenterManagementPageProps
               <p className="text-2xl font-bold text-yellow-600">
                 {
                   presenters.filter(
-                    (p) => p.episodes.length < 3 || p.episodes.filter((ep) => ep.isLie).length !== 1
+                    (p) =>
+                      !p.episodes ||
+                      p.episodes.length < 3 ||
+                      p.episodes.filter((ep) => ep.isLie).length !== 1
                   ).length
                 }
               </p>
