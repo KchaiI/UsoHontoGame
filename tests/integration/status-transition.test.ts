@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { AddPresenterWithEpisodes } from '@/server/application/use-cases/games/AddPresenterWithEpisodes';
 import { CloseGame } from '@/server/application/use-cases/games/CloseGame';
 import { CreateGame } from '@/server/application/use-cases/games/CreateGame';
@@ -6,55 +6,44 @@ import { StartAcceptingResponses } from '@/server/application/use-cases/games/St
 import { ValidateStatusTransition } from '@/server/application/use-cases/games/ValidateStatusTransition';
 import type { IGameRepository } from '@/server/domain/repositories/IGameRepository';
 import { GameId } from '@/server/domain/value-objects/GameId';
-import { createGameRepository } from '@/server/infrastructure/repositories';
+import { PrismaGameRepository } from '@/server/infrastructure/repositories/PrismaGameRepository';
+import { createTestDatabase, type TestDatabase } from '../utils/test-database';
+import { nanoid } from 'nanoid';
 
-describe.only('Status Transition Integration', () => {
+describe('Status Transition Integration', () => {
+  let testDb: TestDatabase;
   let repository: IGameRepository;
   let gameId: string;
   const sessionId = 'test-session-123';
 
-  beforeEach(async () => {
-    // Use in-memory repository for testing
-    process.env.REPOSITORY_TYPE = 'memory';
-    repository = createGameRepository();
+  beforeAll(async () => {
+    // Create isolated test database for this test file
+    testDb = await createTestDatabase('status-transition.test.ts');
+    repository = new PrismaGameRepository(testDb.prisma);
+  });
 
-    // Clear any existing data
-    const inMemoryRepo = repository as any;
-    if (inMemoryRepo.clear) {
-      inMemoryRepo.clear();
-    }
+  beforeEach(async () => {
+    // Clean database before each test
+    await testDb.prisma.episode.deleteMany();
+    await testDb.prisma.presenter.deleteMany();
+    await testDb.prisma.game.deleteMany();
 
     // Create a test game
     const createGame = new CreateGame(repository);
     const gameResult = await createGame.execute({
       creatorId: sessionId,
-      name: 'Test Game',
       playerLimit: 10,
     });
-
     gameId = gameResult.id;
-    
-    // Debug: Verify game was created
-    const createdGame = await repository.findById(new GameId(gameId));
-    if (!createdGame) {
-      throw new Error(`Failed to create test game with ID: ${gameId}`);
-    }
-    console.log(`Test game created with ID: ${gameId}`);
   });
 
-  afterEach(async () => {
-    // Clear in-memory repository data between tests
-    if (process.env.REPOSITORY_TYPE === 'memory') {
-      const inMemoryRepo = repository as any;
-      if (inMemoryRepo.clear) {
-        inMemoryRepo.clear();
-      }
-    }
-    delete process.env.REPOSITORY_TYPE;
+  afterAll(async () => {
+    // Clean up isolated test database
+    await testDb.cleanup();
   });
 
   describe('Start Game Flow (準備中 → 出題中)', () => {
-    it.only('should successfully start game with complete presenter', async () => {
+    it('should successfully start game with complete presenter', async () => {
       // Arrange: Add a complete presenter with 3 episodes (1 lie)
       const addPresenter = new AddPresenterWithEpisodes(repository);
       const presenterResult = await addPresenter.execute({
@@ -138,24 +127,25 @@ describe.only('Status Transition Integration', () => {
       const { Presenter } = await import('@/server/domain/entities/Presenter');
       const { Episode } = await import('@/server/domain/entities/Episode');
       
+      const presenterId = nanoid();
       const episodes = [
         Episode.create({
-          id: 'episode-1',
-          presenterId: 'presenter-2',
+          id: nanoid(),
+          presenterId,
           text: 'Truth 1',
           isLie: false,
           createdAt: new Date(),
         }),
         Episode.create({
-          id: 'episode-2', 
-          presenterId: 'presenter-2',
+          id: nanoid(), 
+          presenterId,
           text: 'Truth 2',
           isLie: false,
           createdAt: new Date(),
         }),
         Episode.create({
-          id: 'episode-3',
-          presenterId: 'presenter-2', 
+          id: nanoid(),
+          presenterId, 
           text: 'Truth 3',
           isLie: false,
           createdAt: new Date(),
@@ -163,7 +153,7 @@ describe.only('Status Transition Integration', () => {
       ];
 
       const presenter = Presenter.createIncomplete({
-        id: 'presenter-2',
+        id: presenterId,
         gameId,
         nickname: 'No Lie Presenter',
         episodes,
@@ -171,9 +161,6 @@ describe.only('Status Transition Integration', () => {
       });
       
       await repository.addPresenter(presenter);
-      for (const episode of episodes) {
-        await repository.addEpisode(episode);
-      }
 
       // Act: Try to start the game
       const validateUseCase = new ValidateStatusTransition(repository);
