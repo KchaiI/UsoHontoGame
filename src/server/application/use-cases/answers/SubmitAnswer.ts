@@ -7,6 +7,7 @@ import type { IGameRepository } from '@/server/domain/repositories/IGameReposito
 import type { SubmitAnswerRequest } from '@/server/application/dto/requests/SubmitAnswerRequest';
 import { AnswerEntity } from '@/server/domain/entities/Answer';
 import { ParticipationEntity } from '@/server/domain/entities/Participation';
+import { GameId } from '@/server/domain/value-objects/GameId';
 
 export interface SubmitAnswerSuccess {
 	success: true;
@@ -49,7 +50,8 @@ export class SubmitAnswer {
 		}
 
 		// Fetch and validate game
-		const game = await this.gameRepository.findById(request.gameId);
+		const gameId = new GameId(request.gameId);
+		const game = await this.gameRepository.findById(gameId);
 
 		if (!game) {
 			return {

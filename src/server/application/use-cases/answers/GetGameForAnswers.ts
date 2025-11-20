@@ -2,6 +2,7 @@
 // Fetches game data for answer submission screen (hides isLie)
 
 import type { IGameRepository } from '@/server/domain/repositories/IGameRepository';
+import { GameId } from '@/server/domain/value-objects/GameId';
 
 export interface GetGameForAnswersResult {
 	success: true;
@@ -42,7 +43,8 @@ export class GetGameForAnswers {
 		}
 
 		// Fetch game
-		const game = await this.gameRepository.findById(gameId);
+		const gameIdObj = new GameId(gameId);
+		const game = await this.gameRepository.findById(gameIdObj);
 
 		if (!game) {
 			return {
