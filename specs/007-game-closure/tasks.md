@@ -31,8 +31,8 @@
 
 **⚠️ CRITICAL**: CloseGame use case is required for User Story 1
 
-- [ ] T004 Write unit tests for CloseGame use case in src/server/application/use-cases/games/CloseGame.test.ts
-- [ ] T005 Implement CloseGame use case in src/server/application/use-cases/games/CloseGame.ts
+- [X] T004 Write unit tests for CloseGame use case in src/server/application/use-cases/games/CloseGame.test.ts
+- [X] T005 Implement CloseGame use case in src/server/application/use-cases/games/CloseGame.ts
 - [ ] T006 Add closeGame server action to src/app/actions/game.ts
 - [ ] T007 Write unit tests for closeGame server action in src/app/actions/game.test.ts
 

@@ -12,6 +12,7 @@ Auto-generated from all feature plans. Last updated: 2025-11-11
 - TypeScript 5 (strict mode) + Next.js 16.0.1 (App Router), React 19.2.0, Prisma 6.19.0, Zod 4.1.12 (001-lie-detection-answers)
 - SQLite via Prisma (file: `prisma/dev.db`) (001-lie-detection-answers)
 - TypeScript 5 (strict mode) + Next.js 16.0.1, React 19.2.0 + Next.js 16.0.1, React 19.2.0, Prisma 6.19.0, Zod 4.1.12, Tailwind CSS v4, nanoid 5.1.6 (006-results-dashboard)
+- TypeScript 5 (strict mode), Node.js 20 + Next.js 16.0.1 (App Router), React 19.2.0, Prisma 6.19.0, Zod 4.1.12, Tailwind CSS v4 (007-game-closure)
 
 **Language & Framework**:
 - TypeScript 5 with strict mode enabled
@@ -291,9 +292,9 @@ npm run check              # Lint and format with Biome
    - React Query integration for state management
 
 ## Recent Changes
+- 007-game-closure: Added TypeScript 5 (strict mode), Node.js 20 + Next.js 16.0.1 (App Router), React 19.2.0, Prisma 6.19.0, Zod 4.1.12, Tailwind CSS v4
 - 006-results-dashboard: Added TypeScript 5 (strict mode) + Next.js 16.0.1, React 19.2.0 + Next.js 16.0.1, React 19.2.0, Prisma 6.19.0, Zod 4.1.12, Tailwind CSS v4, nanoid 5.1.6
 - 006-results-dashboard: Added TypeScript 5 (strict mode) + Next.js 16.0.1, React 19.2.0 + Next.js 16.0.1, React 19.2.0, Prisma 6.19.0, Zod 4.1.12, Tailwind CSS v4, nanoid 5.1.6
-- 001-lie-detection-answers: Added TypeScript 5 (strict mode) + Next.js 16.0.1 (App Router), React 19.2.0, Prisma 6.19.0, Zod 4.1.12
   - Created ActiveGameCard, ActiveGamesList, EmptyState components
   - GetActiveGames use case with status filtering
   - formatRelativeTime utility for Japanese time display
