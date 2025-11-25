@@ -1,6 +1,7 @@
 /**
  * useResponseStatus Hook
  * Feature: 006-results-dashboard, User Story 1
+ * Feature: 007-game-closure, User Story 3 (added auto-stop polling for closed games)
  * Manages real-time response status tracking with polling
  */
 
@@ -88,6 +89,15 @@ export function useResponseStatus({
       const responseData: ResponseStatusDto = await response.json();
       setData(responseData);
       onUpdateRef.current?.(responseData);
+
+      // Stop polling if the game indicates polling should stop (e.g., game is closed)
+      if (!responseData.shouldContinuePolling) {
+        setIsPolling(false);
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+      }
     } catch (err) {
       if (!isMountedRef.current) return;
 
