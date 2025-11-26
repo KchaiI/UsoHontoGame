@@ -40,41 +40,66 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
-      const presenter: Partial<PresenterEntity> = {
+      const presenter1: Partial<PresenterEntity> = {
         id: 'presenter-1',
         nickname: 'Presenter A',
       };
 
-      const episodes: Partial<EpisodeEntity>[] = [
+      const presenter2: Partial<PresenterEntity> = {
+        id: 'presenter-2',
+        nickname: 'Presenter B',
+      };
+
+      const episodes1: Partial<EpisodeEntity>[] = [
         { id: 'ep-1', text: 'Episode 1', isLie: false },
         { id: 'ep-2', text: 'Episode 2 (LIE)', isLie: true },
         { id: 'ep-3', text: 'Episode 3', isLie: false },
       ];
 
+      const episodes2: Partial<EpisodeEntity>[] = [
+        { id: 'ep-4', text: 'Episode 4', isLie: false },
+        { id: 'ep-5', text: 'Episode 5 (LIE)', isLie: true },
+        { id: 'ep-6', text: 'Episode 6', isLie: false },
+      ];
+
       const answers: Partial<AnswerEntity>[] = [
         {
           nickname: 'Alice',
-          selections: new Map([['presenter-1', 'ep-2']]), // Correct (10 points)
+          selections: new Map([
+            ['presenter-1', 'ep-2'], // Correct (10 points)
+            ['presenter-2', 'ep-5'], // Correct (10 points)
+          ]), // Total: 20 points
         },
         {
           nickname: 'Bob',
-          selections: new Map([['presenter-1', 'ep-2']]), // Correct (10 points)
+          selections: new Map([
+            ['presenter-1', 'ep-2'], // Correct (10 points)
+            ['presenter-2', 'ep-4'], // Wrong (0 points)
+          ]), // Total: 10 points
         },
         {
           nickname: 'Charlie',
-          selections: new Map([['presenter-1', 'ep-1']]), // Wrong (0 points)
+          selections: new Map([
+            ['presenter-1', 'ep-1'], // Wrong (0 points)
+            ['presenter-2', 'ep-4'], // Wrong (0 points)
+          ]), // Total: 0 points
         },
       ];
 
       vi.mocked(mockGameRepository.findById).mockResolvedValue(mockGame as GameEntity);
       vi.mocked(mockGameRepository.findPresentersByGameId).mockResolvedValue([
-        presenter as PresenterEntity,
+        presenter1 as PresenterEntity,
+        presenter2 as PresenterEntity,
       ]);
-      vi.mocked(mockGameRepository.findEpisodesByPresenterId).mockResolvedValue(
-        episodes as EpisodeEntity[]
+      vi.mocked(mockGameRepository.findEpisodesByPresenterId).mockImplementation(
+        async (presenterId: string) => {
+          if (presenterId === 'presenter-1') return episodes1 as EpisodeEntity[];
+          if (presenterId === 'presenter-2') return episodes2 as EpisodeEntity[];
+          return [];
+        }
       );
       vi.mocked(mockAnswerRepository.findByGameId).mockResolvedValue(answers as AnswerEntity[]);
 
@@ -86,7 +111,7 @@ describe('GetResults Use Case', () => {
       if (result.success) {
         expect(result.data.averageScore).toBe(10.0);
         expect(result.data.medianScore).toBe(10.0);
-        expect(result.data.highestScore).toBe(10);
+        expect(result.data.highestScore).toBe(20);
         expect(result.data.totalParticipants).toBe(3);
       }
     });
@@ -98,7 +123,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const _presenter: Partial<PresenterEntity> = {
@@ -194,7 +219,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const presenters: Partial<PresenterEntity>[] = [
@@ -272,7 +297,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const _presenter: Partial<PresenterEntity> = {
@@ -338,7 +363,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       vi.mocked(mockGameRepository.findById).mockResolvedValue(mockGame as GameEntity);
@@ -365,7 +390,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const _presenter: Partial<PresenterEntity> = {
@@ -470,7 +495,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('出題中'), // Wrong status
+        status: GameStatus.acceptingResponses(), // Wrong status
       };
 
       vi.mocked(mockGameRepository.findById).mockResolvedValue(mockGame as GameEntity);
@@ -491,7 +516,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('準備中'), // Wrong status
+        status: GameStatus.preparation(), // Wrong status
       };
 
       vi.mocked(mockGameRepository.findById).mockResolvedValue(mockGame as GameEntity);
@@ -514,7 +539,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const presenter: Partial<PresenterEntity> = {
@@ -567,7 +592,7 @@ describe('GetResults Use Case', () => {
       const mockGame: Partial<GameEntity> = {
         id: new GameId(gameId),
         name: 'Test Game',
-        status: GameStatus.fromString('締切'),
+        status: GameStatus.closed(),
       };
 
       const presenter: Partial<PresenterEntity> = {
