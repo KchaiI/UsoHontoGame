@@ -84,7 +84,7 @@ export function useGameStatus({
           return;
         } else {
           throw new Error(
-            result.errors._form?.[0] ||
+            result.errors?._form?.[0] ||
               `ゲームの${operation === 'start' ? '開始' : '締切'}に失敗しました`
           );
         }

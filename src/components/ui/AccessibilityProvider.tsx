@@ -22,7 +22,7 @@ const AccessibilityContext = createContext<AccessibilityContextValue | null>(nul
  * Manages screen reader announcements and accessibility features
  */
 export function AccessibilityProvider({ children }: { children: React.ReactNode }) {
-  const politeAnnouncerRef = useRef<HTMLDivElement>(null);
+  const politeAnnouncerRef = useRef<HTMLOutputElement>(null);
   const assertiveAnnouncerRef = useRef<HTMLDivElement>(null);
 
   const announceToScreenReader = useCallback(
