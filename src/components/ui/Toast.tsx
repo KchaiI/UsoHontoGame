@@ -226,7 +226,10 @@ export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
   const { t } = useLanguage();
 
   return (
-    <aside className="fixed top-4 right-4 z-50 max-w-sm w-full space-y-2" aria-label={t('toast.notificationArea')}>
+    <aside
+      className="fixed top-4 right-4 z-50 max-w-sm w-full space-y-2"
+      aria-label={t('toast.notificationArea')}
+    >
       {toasts.map((toast) => (
         <Toast key={toast.id} {...toast} onClose={onClose} />
       ))}

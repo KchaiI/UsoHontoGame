@@ -115,7 +115,10 @@ export function useConditionalAnnouncement() {
 
       // Always announce for screen reader users, but be more verbose if reduced motion is preferred
       if (prefersReducedMotion) {
-        announceToScreenReader(t('accessibility.detailedUpdate').replace('{message}', message), priority);
+        announceToScreenReader(
+          t('accessibility.detailedUpdate').replace('{message}', message),
+          priority
+        );
       } else {
         announceToScreenReader(message, priority);
       }

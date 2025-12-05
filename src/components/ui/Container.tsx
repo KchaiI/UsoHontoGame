@@ -1,116 +1,79 @@
 /**
  * Container Component
- * Feature: 009-apple-hig-ui-redesign
- * Content deference through proper content width constraints
+ * Feature: 009-apple-hig-ui-redesign - Phase 8: Responsive Design
+ * Responsive container with max-width constraints
  */
 
 'use client';
 
-import type { ElementType, HTMLAttributes, ReactNode } from 'react';
+import { type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from '@/lib/design-system/classNames';
 
-/**
- * Size variants for container max-width
- */
-export type ContainerSize = 'sm' | 'md' | 'lg' | 'full';
+export type ContainerSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
-/**
- * Padding sizes for horizontal spacing
- */
-export type ContainerPadding = 'none' | 'sm' | 'md' | 'lg' | 'xl';
-
-/**
- * HTML elements that can be used for the container
- */
-export type ContainerElement = 'div' | 'section' | 'main' | 'article' | 'header' | 'footer' | 'nav';
-
-export interface ContainerProps extends HTMLAttributes<HTMLElement> {
-  /** Container content */
-  children: ReactNode;
-  /** Maximum width variant */
+export interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
+  /** Container maximum width */
   size?: ContainerSize;
-  /** Horizontal padding */
-  padding?: ContainerPadding;
-  /** Center the container horizontally */
-  center?: boolean;
-  /** HTML element to render as */
-  as?: ContainerElement;
-  /** Additional CSS classes */
+  /** Center the container */
+  centered?: boolean;
+  /** Apply padding */
+  padding?: boolean;
+  /** Children elements */
+  children: ReactNode;
+  /** Custom className */
   className?: string;
 }
 
 /**
  * Container Component
  *
- * Apple HIG-compliant container for constraining content width and
- * ensuring proper readability. Supports various max-width options,
- * responsive padding, and semantic HTML elements.
+ * Responsive container with max-width constraints and automatic centering.
+ * Provides consistent spacing and alignment across breakpoints.
  *
  * @example
  * ```tsx
- * <Container size="lg" padding="lg">
+ * <Container size="lg">
  *   <h1>Page Title</h1>
- *   <p>Page content with proper width constraints</p>
+ *   <p>Content goes here</p>
  * </Container>
  * ```
  *
  * @example
  * ```tsx
- * <Container as="section" size="sm">
- *   <article>Narrow content for better readability</article>
- * </Container>
- * ```
- *
- * @example
- * ```tsx
- * <Container size="full" padding="none">
- *   <div>Full-width hero section</div>
+ * <Container size="xl" padding centered>
+ *   <div>Centered content with padding</div>
  * </Container>
  * ```
  */
 export function Container({
+  size = 'xl',
+  centered = true,
+  padding = true,
   children,
-  size = 'md',
-  padding = 'md',
-  center = true,
-  as: Component = 'div',
   className,
   ...props
 }: ContainerProps) {
-  // Base styles
-  const baseStyles = classNames('container-base', 'w-full');
-
-  // Size styles - max-width constraints
   const sizeStyles = {
-    sm: classNames('container-sm', 'max-w-3xl'), // ~768px
-    md: classNames('container-md', 'max-w-5xl'), // ~1024px
-    lg: classNames('container-lg', 'max-w-7xl'), // ~1280px
-    full: classNames('container-full', 'max-w-full'),
+    sm: 'max-w-screen-sm',
+    md: 'max-w-screen-md',
+    lg: 'max-w-screen-lg',
+    xl: 'max-w-screen-xl',
+    '2xl': 'max-w-screen-2xl',
+    full: 'max-w-full',
   };
-
-  // Padding styles - horizontal padding
-  const paddingStyles = {
-    none: 'px-0',
-    sm: 'px-2', // 8px
-    md: 'px-4', // 16px
-    lg: 'px-6', // 24px
-    xl: 'px-8', // 32px
-  };
-
-  // Centering
-  const centerStyles = center ? 'mx-auto' : '';
 
   const containerClassName = classNames(
-    baseStyles,
+    'container-base',
+    'w-full',
     sizeStyles[size],
-    paddingStyles[padding],
-    centerStyles,
+    centered && 'mx-auto',
+    padding && 'px-4 sm:px-6 lg:px-8',
     className
   );
 
   return (
-    <Component className={containerClassName} {...props}>
+    <div className={containerClassName} {...props}>
       {children}
-    </Component>
+    </div>
   );
 }
