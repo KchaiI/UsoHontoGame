@@ -7,6 +7,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { t } from '@/lib/i18n/server';
+import { translateZodError } from '@/lib/i18n/translateZodError';
 import type { GameDetailDto } from '@/server/application/dto/GameDetailDto';
 import type { CreateGameOutput, GameManagementDto } from '@/server/application/dto/GameDto';
 import { CloseGame } from '@/server/application/use-cases/games/CloseGame';
@@ -72,7 +73,7 @@ export async function createGameAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -150,7 +151,7 @@ export async function startAcceptingAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -335,7 +336,7 @@ export async function updateGameAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -410,7 +411,7 @@ export async function deleteGameAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -480,7 +481,7 @@ export async function startGameAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -556,7 +557,7 @@ export async function closeGameAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 

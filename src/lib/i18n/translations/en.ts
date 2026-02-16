@@ -52,7 +52,7 @@ export const en: Translations = {
     status: {
       preparing: 'Preparing',
       active: 'Active',
-      closed: 'Closed',
+      closed: 'The game has been closed',
     },
     presenter: 'Presenter',
     presenters: 'Presenters',
@@ -104,7 +104,7 @@ export const en: Translations = {
     answerForm: 'Answer Form',
     detectLieTitle: 'Detect the Lie',
     detectLieDescription: 'Select the lie from the 3 episodes of each presenter.',
-    selectAllEpisodes: 'Please select an answer for all presenters',
+    selectAllEpisodes: 'Please select an answer for all presenters (出題者)',
     ready: 'Ready to Submit',
   },
 
@@ -161,6 +161,8 @@ export const en: Translations = {
     forbidden: 'Access denied',
     validationFailed: 'Validation failed',
     unexpectedError: 'Unexpected error occurred',
+    nicknameUpdateFailed: 'Failed to set nickname',
+    gameClosed: 'Game closed',
     errorOccurred: 'An error occurred',
     responseStatusFetchError: 'Response Status Fetch Error',
   },
@@ -208,7 +210,7 @@ export const en: Translations = {
     },
     episode: {
       empty: 'Please enter episode content',
-      tooLong: 'Episode must be 500 characters or less',
+      tooLong: 'Episode must be 1000 characters or less',
       count: 'Please enter exactly 3 episodes',
       lieCount: 'Select exactly 1 lie episode',
       needOneLie: 'Please select one lie episode',
@@ -220,7 +222,7 @@ export const en: Translations = {
     },
     answer: {
       noSelections: 'Please select an answer',
-      incomplete: 'Please answer for all presenters',
+      incomplete: 'Please select an answer for all presenters (出題者)',
     },
   },
 
@@ -271,7 +273,7 @@ export const en: Translations = {
     labels: {
       preparing: 'Preparing',
       active: 'Active',
-      closed: 'Closed',
+      closed: 'The game has been closed',
       starting: 'Starting...',
       closing: 'Closing...',
       updating: 'Updating...',
@@ -287,7 +289,7 @@ export const en: Translations = {
       gameStarted: 'Game started',
       gameClosed: 'Game closed',
       statusUpdated: 'Status updated',
-      cannotEdit: 'Cannot edit active or closed games',
+      cannotEdit: 'Cannot edit closed games',
     },
   },
 
@@ -301,7 +303,7 @@ export const en: Translations = {
     goToPresenterPage: 'Go to Presenter Management',
     presenterList: 'Presenter List',
     registeredPresenters: 'Registered Presenters',
-    noPresenter: 'No presenters',
+    noPresenter: 'Need presenters (出題者) to start the game',
     presenterNotFound: 'Presenter not found',
     episodeCount: 'Episode Count',
     registrationStatus: 'Registration Status',
@@ -314,7 +316,7 @@ export const en: Translations = {
     presenterAdded: 'Presenter added',
     presenterDeleted: 'Presenter deleted',
     presenterDeleteFailed: 'Failed to delete presenter',
-    noPresenters: 'No presenters',
+    noPresenters: 'Need presenters (出題者) to start the game',
     presenterEpisodes: "{name}'s Episodes",
     management: 'Presenter Management',
   },
@@ -389,7 +391,7 @@ export const en: Translations = {
     session: {
       notFound: 'Session not found',
       required: 'Session information required',
-      unauthorized: 'You do not have permission to perform this action',
+      unauthorized: 'You do not have permission to modify this game',
     },
   },
 

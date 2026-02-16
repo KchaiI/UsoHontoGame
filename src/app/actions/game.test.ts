@@ -198,7 +198,7 @@ describe('Status Transition Server Actions', () => {
       expect(result).toEqual({
         success: false,
         errors: {
-          _form: ['セッションが見つかりません。ニックネームを設定してください。'],
+          _form: ['セッションが見つかりません。ログインし直してください。'],
         },
       });
     });
@@ -352,7 +352,7 @@ describe('Status Transition Server Actions', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.errors._form).toContain(
-          'セッションが見つかりません。ニックネームを設定してください。'
+          'セッションが見つかりません。ログインし直してください。'
         );
       }
     });
@@ -619,7 +619,7 @@ describe('Status Transition Server Actions', () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.errors._form).toContain('このゲームの編集権限がありません');
+        expect(result.errors._form).toContain('このゲームを変更する権限がありません');
       }
     });
   });

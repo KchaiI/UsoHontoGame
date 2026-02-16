@@ -41,9 +41,12 @@ export const DeleteGameSchema = z.object({
 // Presenter Schemas
 export const AddPresenterSchema = z.object({
   gameId: GameIdSchema,
-  nickname: z.string().min(1, { message: 'NICKNAME_EMPTY' }).max(50, {
-    message: 'NICKNAME_TOO_LONG',
-  }),
+  nickname: z
+    .string({ invalid_type_error: 'NICKNAME_EMPTY' })
+    .min(1, { message: 'NICKNAME_EMPTY' })
+    .max(50, {
+      message: 'NICKNAME_TOO_LONG',
+    }),
 });
 
 export const RemovePresenterSchema = z.object({
@@ -54,9 +57,12 @@ export const RemovePresenterSchema = z.object({
 // Episode Schemas - CRITICAL: 1-1000 characters required (not an assumption)
 export const AddEpisodeSchema = z.object({
   presenterId: z.string().min(1, { message: 'REQUIRED' }),
-  text: z.string().min(1, { message: 'EPISODE_EMPTY' }).max(1000, {
-    message: 'EPISODE_TOO_LONG',
-  }),
+  text: z
+    .string({ invalid_type_error: 'EPISODE_EMPTY' })
+    .min(1, { message: 'EPISODE_EMPTY' })
+    .max(1000, {
+      message: 'EPISODE_TOO_LONG',
+    }),
   isLie: z.boolean(),
 });
 
@@ -78,14 +84,17 @@ export const RemoveEpisodeSchema = z.object({
 export const AddPresenterWithEpisodesSchema = z
   .object({
     gameId: GameIdSchema,
-    nickname: z.string().min(1, { message: 'NICKNAME_EMPTY' }).max(50, {
-      message: 'NICKNAME_TOO_LONG',
-    }),
+    nickname: z
+      .string({ invalid_type_error: 'NICKNAME_EMPTY' })
+      .min(1, { message: 'NICKNAME_EMPTY' })
+      .max(50, {
+        message: 'NICKNAME_TOO_LONG',
+      }),
     episodes: z
       .array(
         z.object({
           text: z
-            .string()
+            .string({ invalid_type_error: 'EPISODE_EMPTY' })
             .min(1, { message: 'EPISODE_EMPTY' })
             .max(1000, { message: 'EPISODE_TOO_LONG' }),
           isLie: z.boolean(),

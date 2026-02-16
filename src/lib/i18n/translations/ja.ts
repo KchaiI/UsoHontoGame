@@ -105,7 +105,7 @@ export const ja: Translations = {
     detectLieTitle: 'ウソを見抜いてください',
     detectLieDescription:
       '各プレゼンターの3つのエピソードの中から、ウソのエピソードを1つ選んでください。',
-    selectAllEpisodes: 'すべてのプレゼンターの回答を選択してください',
+    selectAllEpisodes: 'すべての出題者の回答を選択してください',
     ready: '回答準備完了',
   },
 
@@ -161,6 +161,8 @@ export const ja: Translations = {
     forbidden: 'アクセスが拒否されました',
     validationFailed: '入力内容に誤りがあります',
     unexpectedError: '予期しないエラーが発生しました',
+    nicknameUpdateFailed: 'ニックネームの設定に失敗しました',
+    gameClosed: '締め切られました',
     errorOccurred: 'エラーが発生しました',
     responseStatusFetchError: '回答状況の取得エラー',
   },
@@ -208,7 +210,7 @@ export const ja: Translations = {
     },
     episode: {
       empty: 'エピソード内容を入力してください',
-      tooLong: 'エピソードは500文字以内で入力してください',
+      tooLong: 'エピソードは1000文字以内で入力してください',
       count: 'エピソードは3つ入力してください',
       lieCount: 'ウソのエピソードは1つだけ選択してください',
       needOneLie: 'ウソのエピソードを1つ選択してください',
@@ -220,7 +222,7 @@ export const ja: Translations = {
     },
     answer: {
       noSelections: '回答を選択してください',
-      incomplete: 'すべてのプレゼンターの回答を選択してください',
+      incomplete: 'すべての出題者の回答を選択してください',
     },
   },
 
@@ -287,7 +289,7 @@ export const ja: Translations = {
       gameStarted: 'ゲームを開始しました',
       gameClosed: 'ゲームを締め切りました',
       statusUpdated: 'ステータスを更新しました',
-      cannotEdit: '出題中または締切済みのゲームは編集できません',
+      cannotEdit: '締切状態のゲームは変更できません',
     },
   },
 
@@ -301,7 +303,7 @@ export const ja: Translations = {
     goToPresenterPage: 'プレゼンター管理ページへ',
     presenterList: 'プレゼンター一覧',
     registeredPresenters: '登録済みプレゼンター',
-    noPresenter: 'プレゼンターがいません',
+    noPresenter: 'ゲームを開始するには出題者が必要です',
     presenterNotFound: 'プレゼンターが見つかりません',
     episodeCount: 'エピソード数',
     registrationStatus: '登録状況',
@@ -314,7 +316,7 @@ export const ja: Translations = {
     presenterAdded: 'プレゼンターを追加しました',
     presenterDeleted: 'プレゼンターを削除しました',
     presenterDeleteFailed: 'プレゼンターの削除に失敗しました',
-    noPresenters: 'プレゼンターがいません',
+    noPresenters: 'ゲームを開始するには出題者が必要です',
     presenterEpisodes: '{name}のエピソード',
     management: 'プレゼンター管理',
   },
@@ -386,9 +388,9 @@ export const ja: Translations = {
       },
     },
     session: {
-      notFound: 'セッションが見つかりません',
+      notFound: 'セッションが見つかりません。ログインし直してください。',
       required: 'セッション情報が必要です',
-      unauthorized: 'この操作を行う権限がありません',
+      unauthorized: 'このゲームを変更する権限がありません',
     },
   },
 

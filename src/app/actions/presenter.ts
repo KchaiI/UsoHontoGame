@@ -6,6 +6,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { t } from '@/lib/i18n/server';
+import { translateZodError } from '@/lib/i18n/translateZodError';
 import type { EpisodeWithLieDto } from '@/server/application/dto/EpisodeWithLieDto';
 import type { PresenterWithLieDto } from '@/server/application/dto/PresenterWithLieDto';
 import { AddEpisode } from '@/server/application/use-cases/games/AddEpisode';
@@ -62,7 +63,7 @@ export async function addPresenterAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -119,7 +120,7 @@ export async function removePresenterAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -188,7 +189,7 @@ export async function addEpisodeAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
@@ -256,14 +257,14 @@ export async function addPresenterWithEpisodesAction(
       const text = formData.get(`episodes[${i}].text`) || formData.get(`episode${i}Text`);
       const isLieStr = formData.get(`episodes[${i}].isLie`) || formData.get(`episode${i}IsLie`);
       episodesRaw.push({
-        text,
+        text: text || '', // Convert null to empty string for validation
         isLie: isLieStr === 'true',
       });
     }
 
     const rawData = {
       gameId: formData.get('gameId'),
-      nickname: formData.get('nickname'),
+      nickname: formData.get('nickname') || '', // Convert null to empty string for validation
       episodes: episodesRaw,
     };
 
@@ -272,7 +273,7 @@ export async function addPresenterWithEpisodesAction(
     if (!validationResult.success) {
       return {
         success: false,
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: await translateZodError(validationResult.error),
       };
     }
 
