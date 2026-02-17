@@ -67,7 +67,7 @@ export function PresenterManagementPage({ gameId }: PresenterManagementPageProps
               >
                 ← {t('game.gameDetails')}
               </a>
-              <a href="/top" className="inline-block text-sm text-gray-600 hover:text-gray-900">
+              <a href="/games" className="inline-block text-sm text-gray-600 hover:text-gray-900">
                 ← {t('navigation.home')}
               </a>
             </div>

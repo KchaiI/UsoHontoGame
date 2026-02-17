@@ -10,7 +10,7 @@ test.describe('Game Creation Flow', () => {
     await page.goto('/');
     await page.fill('input[name="nickname"]', 'TestModerator');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top');
+    await page.waitForLoadState('networkidle');
   });
 
   test('should display game creation form', async ({ page }) => {
@@ -22,7 +22,7 @@ test.describe('Game Creation Flow', () => {
     // Check form elements
     await expect(page.locator('input[name="playerLimit"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toContainText('ゲームを作成');
-    await expect(page.locator('a[href="/top"]')).toContainText('キャンセル');
+    await expect(page.locator('a[href="/games"]')).toContainText('キャンセル');
   });
 
   test('should create game with valid player limit', async ({ page }) => {
@@ -38,10 +38,10 @@ test.describe('Game Creation Flow', () => {
     await expect(page.locator('text=ゲームを作成しました！')).toBeVisible();
 
     // Should redirect to TOP page
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
 
     // Verify we're on TOP page
-    await expect(page).toHaveURL('/top');
+    await expect(page).toHaveURL('/games');
   });
 
   test('should create game with minimum player limit (1)', async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe('Game Creation Flow', () => {
     await page.click('button[type="submit"]');
 
     await expect(page.locator('text=ゲームを作成しました！')).toBeVisible();
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
   });
 
   test('should create game with maximum player limit (100)', async ({ page }) => {
@@ -61,7 +61,7 @@ test.describe('Game Creation Flow', () => {
     await page.click('button[type="submit"]');
 
     await expect(page.locator('text=ゲームを作成しました！')).toBeVisible();
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
   });
 
   test('should show validation error for player limit below 1', async ({ page }) => {
@@ -121,10 +121,10 @@ test.describe('Game Creation Flow', () => {
     await page.goto('/games/create');
 
     // Click cancel link
-    await page.click('a[href="/top"]');
+    await page.click('a[href="/games"]');
 
     // Should navigate to TOP page
-    await expect(page).toHaveURL('/top');
+    await expect(page).toHaveURL('/games');
   });
 
   test('should show help text about game status', async ({ page }) => {
@@ -153,21 +153,21 @@ test.describe('Game Creation Flow', () => {
     await page.goto('/games/create');
     await page.fill('input[name="playerLimit"]', '10');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
 
     // Create second game
     await page.goto('/games/create');
     await page.fill('input[name="playerLimit"]', '20');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
 
     // Create third game
     await page.goto('/games/create');
     await page.fill('input[name="playerLimit"]', '30');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
 
     // All should succeed independently
-    await expect(page).toHaveURL('/top');
+    await expect(page).toHaveURL('/games');
   });
 });

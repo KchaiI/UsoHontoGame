@@ -12,13 +12,13 @@ test.describe('Presenter Management Flow', () => {
     await page.goto('/');
     await page.fill('input[name="nickname"]', 'TestModerator');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top');
+    await page.waitForURL('/');
 
     // Create a test game first
     await page.goto('/games/create');
     await page.fill('input[name="playerLimit"]', '10');
     await page.click('button[type="submit"]');
-    await page.waitForURL('/top', { timeout: 3000 });
+    await page.waitForURL('/games', { timeout: 3000 });
 
     // Extract game ID from URL or use a mock ID for testing
     // For MVP, we'll use a hardcoded ID
@@ -36,7 +36,7 @@ test.describe('Presenter Management Flow', () => {
     await expect(page.locator('text=プレゼンターを追加')).toBeVisible();
 
     // Check back link
-    await expect(page.locator('a[href="/top"]')).toContainText('TOPページに戻る');
+    await expect(page.locator('a[href="/games"]')).toContainText('TOPページに戻る');
   });
 
   test('should add a presenter successfully', async ({ page }) => {
