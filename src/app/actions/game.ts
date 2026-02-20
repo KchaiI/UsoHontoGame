@@ -14,16 +14,14 @@ import type { RankingDto } from '@/server/application/dto/RankingDto';
 import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 import {
   CloseGameActionSchema,
-  CreateGameSchema,
   DeleteGameSchema,
   StartAcceptingSchema,
   StartGameActionSchema,
-  UpdateGameSchema,
 } from '@/server/domain/schemas/gameSchemas';
 
 /**
  * Server Action: Create new game
- * Validates input with Zod, creates game via GameApplicationService
+ * Parses FormData and delegates to GameApplicationService (validation included)
  * @param formData Form data from GameForm
  * @returns Created game data or validation errors
  */
@@ -32,29 +30,17 @@ export async function createGameAction(
 ): Promise<
   { success: true; game: CreateGameOutput } | { success: false; errors: Record<string, string[]> }
 > {
-  // 1. FormDataパース
+  // 1. FormDataパース（型変換のみ）
   const gameName = formData.get('name');
   const rawData = {
     name: gameName === '' ? null : (gameName?.toString() ?? null),
     playerLimit: Number(formData.get('playerLimit')),
   };
 
-  // 2. Zodバリデーション
-  const validationResult = CreateGameSchema.safeParse(rawData);
-  if (!validationResult.success) {
-    return {
-      success: false,
-      errors: await translateZodError(validationResult.error),
-    };
-  }
+  // 2. Application Service呼び出し（バリデーション含む）
+  const result = await ServiceContainer.getGameService().createGame(rawData);
 
-  // 3. Application Service呼び出し
-  const result = await ServiceContainer.getGameService().createGame({
-    name: validationResult.data.name ?? null,
-    playerLimit: validationResult.data.playerLimit,
-  });
-
-  // 4. 成功時のみrevalidatePath
+  // 3. 成功時のみrevalidatePath
   if (result.success) {
     revalidatePath('/');
     revalidatePath('/games');
@@ -181,7 +167,7 @@ export async function updateGameAction(
 ): Promise<
   { success: true; game: GameDetailDto } | { success: false; errors: Record<string, string[]> }
 > {
-  // 1. FormDataパース
+  // 1. FormDataパース（型変換のみ）
   const gameName = formData.get('name');
   const rawData = {
     gameId: formData.get('gameId') as string,
@@ -189,26 +175,14 @@ export async function updateGameAction(
     playerLimit: formData.get('playerLimit') ? Number(formData.get('playerLimit')) : undefined,
   };
 
-  // 2. Zodバリデーション
-  const validationResult = UpdateGameSchema.safeParse(rawData);
-  if (!validationResult.success) {
-    return {
-      success: false,
-      errors: await translateZodError(validationResult.error),
-    };
-  }
+  // 2. Application Service呼び出し（バリデーション含む）
+  const result = await ServiceContainer.getGameService().updateGame(rawData);
 
-  // 3. Application Service呼び出し
-  const result = await ServiceContainer.getGameService().updateGame({
-    gameId: validationResult.data.gameId,
-    name: validationResult.data.name,
-    playerLimit: validationResult.data.playerLimit,
-  });
-
-  // 4. 成功時のみrevalidatePath
+  // 3. 成功時のみrevalidatePath
   if (result.success) {
+    const gameId = (rawData.gameId as string) || '';
     revalidatePath('/games');
-    revalidatePath(`/games/${validationResult.data.gameId}`);
+    revalidatePath(`/games/${gameId}`);
     return { success: true, game: result.data };
   }
 

@@ -2,6 +2,7 @@
 // Server Actions リファクタリング - Phase 2
 // ゲーム管理のApplication Service
 
+import { translateZodError } from '@/lib/i18n/translateZodError';
 import { SessionServiceContainer } from '@/server/infrastructure/di/SessionServiceContainer';
 import { createGameRepository } from '@/server/infrastructure/repositories';
 import { CreateGame } from '@/server/application/use-cases/games/CreateGame';
@@ -14,6 +15,7 @@ import { CloseGame } from '@/server/application/use-cases/games/CloseGame';
 import { ValidateStatusTransition } from '@/server/application/use-cases/games/ValidateStatusTransition';
 import type { GetActiveGamesResult } from '@/server/application/use-cases/games/GetActiveGames';
 import { GameId } from '@/server/domain/value-objects/GameId';
+import { CreateGameSchema, UpdateGameSchema } from '@/server/domain/schemas/gameSchemas';
 import type { CreateGameOutput, GameManagementDto } from '@/server/application/dto/GameDto';
 import type { GameDetailDto } from '@/server/application/dto/GameDetailDto';
 import type { ServiceResponse, ServiceVoidResponse } from './types';
@@ -26,28 +28,34 @@ import { mapDomainErrorToServiceError } from './errorHandlers';
  */
 export class GameApplicationService {
   /**
-   * ゲーム作成
-   * @param input ゲーム作成パラメータ
-   * @returns 作成されたゲーム情報
+   * ゲーム作成（バリデーション含む）
+   * @param input 未検証のゲーム作成パラメータ
+   * @returns 作成されたゲーム情報またはバリデーションエラー
    */
-  async createGame(input: {
-    name: string | null;
-    playerLimit: number;
-  }): Promise<ServiceResponse<CreateGameOutput>> {
+  async createGame(input: unknown): Promise<ServiceResponse<CreateGameOutput>> {
+    // 1. Zodバリデーション
+    const validationResult = CreateGameSchema.safeParse(input);
+    if (!validationResult.success) {
+      return {
+        success: false,
+        errors: await translateZodError(validationResult.error),
+      };
+    }
+
     try {
-      // 1. セッション取得
+      // 2. セッション取得
       const sessionService = SessionServiceContainer.getSessionService();
       const sessionId = await sessionService.requireCurrentSession();
 
-      // 2. リポジトリ・UseCase準備
+      // 3. リポジトリ・UseCase準備
       const repository = createGameRepository();
       const useCase = new CreateGame(repository);
 
-      // 3. UseCase実行
+      // 4. UseCase実行
       const game = await useCase.execute({
         creatorId: sessionId,
-        name: input.name,
-        playerLimit: input.playerLimit,
+        name: validationResult.data.name ?? null,
+        playerLimit: validationResult.data.playerLimit,
       });
 
       return {
@@ -60,29 +68,34 @@ export class GameApplicationService {
   }
 
   /**
-   * ゲーム設定更新
-   * @param input 更新パラメータ
-   * @returns 更新されたゲーム情報
+   * ゲーム設定更新（バリデーション含む）
+   * @param input 未検証の更新パラメータ
+   * @returns 更新されたゲーム情報またはバリデーションエラー
    */
-  async updateGame(input: {
-    gameId: string;
-    name?: string | null;
-    playerLimit?: number;
-  }): Promise<ServiceResponse<GameDetailDto>> {
+  async updateGame(input: unknown): Promise<ServiceResponse<GameDetailDto>> {
+    // 1. Zodバリデーション
+    const validationResult = UpdateGameSchema.safeParse(input);
+    if (!validationResult.success) {
+      return {
+        success: false,
+        errors: await translateZodError(validationResult.error),
+      };
+    }
+
     try {
-      // 1. セッション取得
+      // 2. セッション取得
       const sessionService = SessionServiceContainer.getSessionService();
       const sessionId = await sessionService.requireCurrentSession();
 
-      // 2. リポジトリ・UseCase準備
+      // 3. リポジトリ・UseCase準備
       const repository = createGameRepository();
       const useCase = new UpdateGameSettings(repository);
 
-      // 3. UseCase実行
+      // 4. UseCase実行
       const result = await useCase.execute({
-        gameId: input.gameId,
-        name: input.name,
-        playerLimit: input.playerLimit,
+        gameId: validationResult.data.gameId,
+        name: validationResult.data.name,
+        playerLimit: validationResult.data.playerLimit,
         requesterId: sessionId,
       });
 
