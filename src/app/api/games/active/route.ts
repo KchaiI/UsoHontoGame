@@ -4,9 +4,7 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { GameApplicationService } from '@/server/application/services/GameApplicationService';
-
-const gameService = new GameApplicationService();
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +20,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const result = await gameService.getActiveGames({ cursor, limit });
+    const result = await ServiceContainer.getGameService().getActiveGames({ cursor, limit });
 
     return NextResponse.json(
       {

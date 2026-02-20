@@ -11,8 +11,7 @@ import { translateZodError } from '@/lib/i18n/translateZodError';
 import type { GameDetailDto } from '@/server/application/dto/GameDetailDto';
 import type { CreateGameOutput, GameManagementDto } from '@/server/application/dto/GameDto';
 import type { RankingDto } from '@/server/application/dto/RankingDto';
-import { GameApplicationService } from '@/server/application/services/GameApplicationService';
-import { ResultsApplicationService } from '@/server/application/services/ResultsApplicationService';
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 import {
   CloseGameActionSchema,
   CreateGameSchema,
@@ -21,10 +20,6 @@ import {
   StartGameActionSchema,
   UpdateGameSchema,
 } from '@/server/domain/schemas/gameSchemas';
-
-// Application Service インスタンス（モジュールレベルSingleton）
-const gameService = new GameApplicationService();
-const resultsService = new ResultsApplicationService();
 
 /**
  * Server Action: Create new game
@@ -54,7 +49,7 @@ export async function createGameAction(
   }
 
   // 3. Application Service呼び出し
-  const result = await gameService.createGame({
+  const result = await ServiceContainer.getGameService().createGame({
     name: validationResult.data.name ?? null,
     playerLimit: validationResult.data.playerLimit,
   });
@@ -110,7 +105,7 @@ export async function startAcceptingAction(
   }
 
   // 2. Application Service呼び出し
-  const result = await gameService.startAcceptingResponses(validationResult.data.gameId);
+  const result = await ServiceContainer.getGameService().startAcceptingResponses(validationResult.data.gameId);
 
   // 3. 成功時のみrevalidatePath
   if (result.success) {
@@ -130,7 +125,7 @@ export async function getGamesAction(): Promise<
   | { success: false; errors: Record<string, string[]> }
 > {
   // Application Service呼び出し
-  const result = await gameService.getGamesByCreator();
+  const result = await ServiceContainer.getGameService().getGamesByCreator();
 
   if (result.success) {
     return { success: true, games: result.data };
@@ -151,7 +146,7 @@ export async function getGameDetailAction(
   { success: true; game: GameDetailDto } | { success: false; errors: Record<string, string[]> }
 > {
   // Application Service呼び出し
-  const result = await gameService.getGameDetail(gameId);
+  const result = await ServiceContainer.getGameService().getGameDetail(gameId);
 
   if (result.success) {
     return { success: true, game: result.data };
@@ -171,7 +166,7 @@ export async function getResultsAction(
 ): Promise<
   { success: true; data: RankingDto } | { success: false; errors: Record<string, string[]> }
 > {
-  const result = await resultsService.getResults(gameId);
+  const result = await ServiceContainer.getResultsService().getResults(gameId);
   return result;
 }
 
@@ -204,7 +199,7 @@ export async function updateGameAction(
   }
 
   // 3. Application Service呼び出し
-  const result = await gameService.updateGame({
+  const result = await ServiceContainer.getGameService().updateGame({
     gameId: validationResult.data.gameId,
     name: validationResult.data.name,
     playerLimit: validationResult.data.playerLimit,
@@ -243,7 +238,7 @@ export async function deleteGameAction(
   }
 
   // 2. Application Service呼び出し
-  const result = await gameService.deleteGame(validationResult.data.gameId);
+  const result = await ServiceContainer.getGameService().deleteGame(validationResult.data.gameId);
 
   // 3. 成功時のみrevalidatePath
   if (result.success) {
@@ -278,7 +273,7 @@ export async function startGameAction(
   }
 
   // 2. Application Service呼び出し
-  const result = await gameService.startGame(validationResult.data.gameId);
+  const result = await ServiceContainer.getGameService().startGame(validationResult.data.gameId);
 
   // 3. 成功時のみrevalidatePath
   if (result.success) {
@@ -315,7 +310,7 @@ export async function closeGameAction(
   }
 
   // 2. Application Service呼び出し
-  const result = await gameService.closeGame(validationResult.data.gameId);
+  const result = await ServiceContainer.getGameService().closeGame(validationResult.data.gameId);
 
   // 3. 成功時のみrevalidatePath
   if (result.success) {

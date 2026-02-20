@@ -4,9 +4,7 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { PresenterApplicationService } from '@/server/application/services/PresenterApplicationService';
-
-const presenterService = new PresenterApplicationService();
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 
 export async function GET(
   _request: NextRequest,
@@ -14,7 +12,7 @@ export async function GET(
 ) {
   try {
     const { presenterId } = await params;
-    const result = await presenterService.getPresenterEpisodes(presenterId);
+    const result = await ServiceContainer.getPresenterService().getPresenterEpisodes(presenterId);
 
     if (!result.success) {
       const errorMessages = Object.values(result.errors).flat();

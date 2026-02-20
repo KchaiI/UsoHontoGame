@@ -3,9 +3,7 @@
 // Returns final rankings with winner highlighting
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { ResultsApplicationService } from '@/server/application/services/ResultsApplicationService';
-
-const resultsService = new ResultsApplicationService();
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 
 export async function GET(
   _request: NextRequest,
@@ -13,7 +11,7 @@ export async function GET(
 ) {
   try {
     const { gameId } = await params;
-    const result = await resultsService.getResults(gameId);
+    const result = await ServiceContainer.getResultsService().getResults(gameId);
 
     if (!result.success) {
       const errorMessages = Object.values(result.errors).flat();

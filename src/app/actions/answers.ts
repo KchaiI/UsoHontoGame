@@ -7,11 +7,8 @@
 
 import { t } from '@/lib/i18n/server';
 import type { GetGameForAnswersResponse } from '@/server/application/use-cases/answers/GetGameForAnswers';
-import { AnswerApplicationService } from '@/server/application/services/AnswerApplicationService';
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 import { SubmitAnswerSchema } from '@/server/domain/schemas/answerSchemas';
-
-// AnswerApplicationService インスタンス（モジュールレベルSingleton）
-const answerService = new AnswerApplicationService();
 
 /**
  * Server Action: Get game data for answer submission page
@@ -20,7 +17,7 @@ const answerService = new AnswerApplicationService();
  */
 export async function getGameForAnswersAction(gameId: string): Promise<GetGameForAnswersResponse> {
   // Application Service呼び出し
-  return await answerService.getGameForAnswers(gameId);
+  return await ServiceContainer.getAnswerService().getGameForAnswers(gameId);
 }
 
 /**
@@ -72,7 +69,7 @@ export async function submitAnswerAction(
   }
 
   // 3. Application Service呼び出し
-  const result = await answerService.submitAnswer({
+  const result = await ServiceContainer.getAnswerService().submitAnswer({
     gameId: validation.data.gameId,
     selections: validation.data.selections,
   });

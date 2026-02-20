@@ -5,9 +5,7 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { DashboardApplicationService } from '@/server/application/services/DashboardApplicationService';
-
-const dashboardService = new DashboardApplicationService();
+import { ServiceContainer } from '@/server/infrastructure/di/ServiceContainer';
 
 export async function GET(
   _request: NextRequest,
@@ -15,7 +13,7 @@ export async function GET(
 ) {
   try {
     const { gameId } = await params;
-    const result = await dashboardService.getResponseStatus(gameId);
+    const result = await ServiceContainer.getDashboardService().getResponseStatus(gameId);
 
     if (!result.success) {
       const errorMessage = result.errors._form?.[0] || 'Unknown error';
