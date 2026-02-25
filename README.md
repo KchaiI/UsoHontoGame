@@ -102,31 +102,48 @@ npm run dev
 
 ## 開発者向け情報
 
-### 技術スタック
+### 開発のヒント
 
-#### コア
-- **フレームワーク**: Next.js 16.0.1 (App Router)
-- **言語**: TypeScript 5 (strictモード)
-- **UIライブラリ**: React 19.2.0
-- **スタイリング**: Tailwind CSS v4
+#### ダミーデータを作る
 
-#### データ・永続化
-- **データベース**: SQLite (Prisma経由)
-- **ORM**: Prisma 6.19.0
-- **バリデーション**: Zod 4.1.12
-- **ID生成**: nanoid 5.1.6
+開発中にすぐ動作確認したい場合は、シードスクリプトでダミーデータを一括生成できます（詳細は[シードスクリプト](#シードスクリプトテストデータ生成)を参照）。
 
-#### テスト
-- **ユニットテスト**: Vitest 4.0.7
-- **E2Eテスト**: Playwright 1.56.1
-- **コンポーネントテスト**: Testing Library
+```bash
+npm run seed                    # 全ステータスのゲームを150件作成
+npm run seed:my <session-id>    # 自分のセッションで100件作成
+```
 
-⚠️ **注意**: 多くのテストが現在失敗します。テストファイルは現在メンテナンスされていません。
+#### セッションIDの確認方法
 
-#### コード品質
-- **リント・フォーマット**: Biome 2.3.4、ESLint 9
+1. DevTools（F12）を開く
+2. Application → Cookies → `http://localhost:3000`
+3. `sessionId` Cookieの値をコピー
 
-## 開発ガイド
+**用途:**
+- `npm run seed:my <session-id>` でテストデータ生成
+- セッション固有の問題をデバッグ
+
+#### 複数ユーザーのテスト
+
+- **通常のブラウザ**: ユーザーA
+- **シークレットモード**: ユーザーB
+
+各ブラウザで独立したセッションを作成できます。
+
+```bash
+# ターミナル1: ユーザーAのゲームをシード
+npm run seed:my <session-id-A>
+
+# ターミナル2: ユーザーBのゲームをシード
+npm run seed:my <session-id-B>
+```
+
+#### DBスキーマを変更したい場合
+
+1. `prisma/schema.prisma`を更新
+2. マイグレーション作成: `npx prisma migrate dev --name description`
+3. リポジトリ実装を更新
+4. ドメインエンティティを更新（必要に応じて）
 
 ### 利用可能なコマンド
 
@@ -138,8 +155,16 @@ npm start            # 本番サーバー起動
 ```
 
 #### テスト
+> ⚠️ 現在テストは正常に動作しません。
+
 ```bash
 npm test                   # すべてのテストを実行
+```
+
+<details>
+<summary>個別コマンド</summary>
+
+```bash
 npm run test:unit          # ユニットテストのみ
 npm run test:integration   # 統合テストのみ
 npm run test:ui            # インタラクティブUI
@@ -148,6 +173,8 @@ npm run test:e2e           # E2Eテスト
 npm run test:e2e:ui        # E2EテストUI
 npm run test:e2e:debug     # E2Eデバッグ
 ```
+
+</details>
 
 #### データベース
 ```bash
@@ -176,63 +203,34 @@ npm run seed:my <session-id>
 
 #### コード品質
 ```bash
-npm run lint               # ESLintでリント
-npm run lint:biome         # Biomeでリント
-npm run format             # Biomeでフォーマット
-npm run format:check       # フォーマットチェック
 npm run check              # リント＋フォーマット
 ```
 
-### 開発のヒント
+### 技術スタック
 
-#### セッションIDの確認方法
+#### コア
+- **フレームワーク**: Next.js 16.0.1 (App Router)
+- **言語**: TypeScript 5 (strictモード)
+- **UIライブラリ**: React 19.2.0
+- **スタイリング**: Tailwind CSS v4
 
-1. DevTools（F12）を開く
-2. Application → Cookies → `http://localhost:3000`
-3. `sessionId` Cookieの値をコピー
+#### データ・永続化
+- **データベース**: SQLite (Prisma経由)
+- **ORM**: Prisma 6.19.0
+- **バリデーション**: Zod 4.1.12
+- **ID生成**: nanoid 5.1.6
 
-**用途:**
-- `npm run seed:my <session-id>` でテストデータ生成
-- セッション固有の問題をデバッグ
+#### テスト
+- **ユニットテスト**: Vitest 4.0.7
+- **E2Eテスト**: Playwright 1.56.1
+- **コンポーネントテスト**: Testing Library
 
-#### 複数ユーザーのテスト
+> [!WARNING]
+> **テストは現在メンテナンスされていません。**
+> 多くのテストが失敗します。テストコマンドを実行しても正常に通過しない可能性があります。
 
-- **通常のブラウザ**: ユーザーA
-- **シークレットモード**: ユーザーB
-
-各ブラウザで独立したセッションを作成できます。
-
-```bash
-# ターミナル1: ユーザーAのゲームをシード
-npm run seed:my <session-id-A>
-
-# ターミナル2: ユーザーBのゲームをシード
-npm run seed:my <session-id-B>
-```
-
-### 開発ワークフロー
-
-#### データベース変更
-1. `prisma/schema.prisma`を更新
-2. マイグレーション作成: `npx prisma migrate dev --name description`
-3. リポジトリ実装を更新
-4. ドメインエンティティを更新（必要に応じて）
-
-### 環境変数
-
-`.env`:
-```env
-DATABASE_URL="file:./dev.db"
-```
-
-`.env.local`:
-```env
-DATABASE_URL="file:/absolute/path/to/prisma/dev.db"
-```
-
-⚠️ **注意**: 両方のファイルが必要です。
-- `.env`: Prisma CLI用（相対パス）
-- `.env.local`: Next.jsランタイム用（絶対パス）
+#### コード品質
+- **リント・フォーマット**: Biome 2.3.4、ESLint 9
 
 ## ライセンス
 
