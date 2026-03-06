@@ -9,6 +9,7 @@ import { SetNickname } from '@/server/application/use-cases/session/SetNickname'
 import { ValidateSession } from '@/server/application/use-cases/session/ValidateSession';
 import { EmptyNicknameError, NicknameTooLongError } from '@/server/domain/value-objects/Nickname';
 import type { ISessionRepository } from '@/server/domain/repositories/ISessionRepository';
+import { SessionId } from '@/server/domain/value-objects/SessionId';
 
 /**
  * Result types for SessionApplicationService
@@ -27,6 +28,10 @@ export type ValidateSessionResult = {
   nickname: string | null;
   hasNickname: boolean;
 };
+
+export type LogoutResult =
+  | { success: true }
+  | { success: false; error: { code: string; message: string } };
 
 /**
  * SessionApplicationService
@@ -166,6 +171,30 @@ export class SessionApplicationService {
         sessionId: null,
         nickname: null,
         hasNickname: false,
+      };
+    }
+  }
+
+  async logout(): Promise<LogoutResult> {
+    try {
+      const sessionService = SessionServiceContainer.getSessionService();
+      const sessionIdValue = await sessionService.getCurrentSessionId();
+
+      if (!sessionIdValue) {
+        return { success: true };
+      }
+
+      const sessionId = new SessionId(sessionIdValue);
+      await this.sessionRepository.delete(sessionId);
+
+      return { success: true };
+    } catch {
+      return {
+        success: false,
+        error: {
+          code: 'LOGOUT_FAILED',
+          message: 'Failed to logout',
+        },
       };
     }
   }

@@ -6,7 +6,10 @@
 // Refactored to use SessionApplicationService
 
 import { redirect } from 'next/navigation';
-import { SessionApplicationService } from '@/server/application/services/SessionApplicationService';
+import {
+  SessionApplicationService,
+  type LogoutResult,
+} from '@/server/application/services/SessionApplicationService';
 
 // SessionApplicationService インスタンス（モジュールレベルSingleton）
 const sessionService = new SessionApplicationService();
@@ -34,6 +37,8 @@ export type ValidateSessionResult = {
   nickname: string | null;
   hasNickname: boolean;
 };
+
+export type LogoutActionResult = LogoutResult;
 
 /**
  * Creates a new session with a unique session ID
@@ -75,4 +80,14 @@ export async function requireSessionAction(): Promise<{ sessionId: string }> {
     redirect('/');
   }
   return { sessionId: result.sessionId };
+}
+
+export async function logoutAction(): Promise<LogoutActionResult> {
+  const result = await sessionService.logout();
+
+  if (result.success) {
+    redirect('/');
+  }
+
+  return result;
 }
